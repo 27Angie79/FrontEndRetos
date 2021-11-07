@@ -55,9 +55,9 @@ function guardarReservacion() {
             success:function(response) {
                 console.log(response);
                 $("#resultado5").empty();
-                $("#starDate").val(""),
-                $("#devolutionDate").val(""),
-                $("#status").val(""),
+                $("#starDate").val("");
+                $("#devolutionDate").val("");
+                $("#status").val("");
 
                 alert("Reservacion guardada correctamente");
         

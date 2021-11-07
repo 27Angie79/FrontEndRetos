@@ -48,8 +48,68 @@ function pintarRespuestaMachines(response) {
     $("#miListaMachines").html(myTable);
 }
 
-function cargarDatosMachine() {
+function cargarDatosMachine(id) {
+    $.ajax({
+        url:"http://129.151.100.76:8080/api/Machine/" + id,
+        type:"GET",
+        datatype:"JSON",
+        success:function(response){
+            console.log(response);
+            var item = response
+            $("#id").val(item.id);
+            $("#Mname").val(item.name.split("T")[0]);
+            $("#Mbrand").val(item.brand);
+            $("#Myear").val(item.year);
+            $("#Mdescription").val(item.description);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            alert("Ha ocurrido un error desconocido");
     
+        }
+    });
+}
+
+function guardarMachine() {
+    if ($("#startDate").val().length == 0 || $("#devolutionDate").val().length == 0 || $("#status").val().length == 0) {
+        alert("Todos los campos son obligatorios")
+    } else {
+        let elemento = {
+            name: $("#Mname").val(),
+            brand: $("#Mbrand").val(),
+            year: $("#Myear").val(),
+            description: $("#Mdescription").val(),
+            category:{ id: + $("#select-category").val()},
+        }   
+
+        let dataToSend = JSON.stringify(elemento);
+        console.log(elemento);
+
+        $.ajax({
+            type:'POST',
+            contentType: "application/json; charset=utf-8",
+            dataType: 'JSON',
+            data: dataToSend,
+            
+            url:"http://129.151.100.76:8080/api/Machine/save",
+           
+            
+            success:function(response) {
+                console.log(response);
+                $("#miListaMachines").empty();
+                $("#Mname").val("");
+                $("#Mbrand").val("");
+                $("#Myear").val("");
+                $("#Mdescription").val("");
+
+                alert("Maquina guardada correctamente");
+        
+            },
+            
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert("No se guardo correctamente");
+        
+            }
+            });
 }
 
 
