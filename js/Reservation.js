@@ -102,3 +102,96 @@ function pintarRespuestaReservation(respuesta) {
     myTable+="</table>";
     $("#miListaReservacion").html(myTable);
 }
+
+function borrarResevacion(idElemento) {
+    let elemento = {
+        id:idElemento
+    }
+
+    let dataToSend = JSON.stringify(elemento);
+
+    $.ajax({
+        url:"http://129.151.100.76:8080/api/Reservation/" + idElemento,
+        type:"DELETE",
+        data:dataToSend,
+        contentType:"application/JSON",
+        datatype:"JSON",
+
+        success:function(respuesta){
+            $("#miListaReservacion").empty();
+            alert("Reservacion eliminada correctamente");
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            alert("No se elimino correctamente");
+    
+        }
+        });
+}
+
+function cargarDatosReservacion(id) {
+    $.ajax({
+        url:"http://129.151.100.76:8080/api/Reservation/" + id,
+        type:"GET",
+        success:function(response){
+            
+            console.log(response);
+            var item = response
+            $("#startDate").val(item.startDate.split("T")[0]);
+            $("#devolutionDate").val(item.devolutionDate.split("T")[0]);
+            $("#status").val(item.status);
+            $("#select-client").val(item.client.idClient);
+            $("#select-machine").val(item.machine.id);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            alert("Ha ocurrido un error desconocido");
+    
+        }
+
+    });
+}
+
+function actualizarReservacion(idElemento) {
+    let status = $("#status").val();
+    let status1
+    if (status == 1) {
+        status1 = 'completed'
+    } else {
+        status1 = 'cancelled'
+    }
+
+    if ($("#startDate").val().length == 0 || $("#devolutionDate").val().length == 0 || $("#status").val().length == 0) {
+        alert("Todos los campos son obligatorios")
+    } else {
+        let elemento = {
+            idReservation: idElemento,
+            startDate: $("#starDate").val(),
+            devolutionDate: $("#devolutionDate").val(),
+            status: status1,
+            machine:{ id: + $("#select-machine").val()},
+            client:{ idClient: + $("#select-client").val()},
+        }
+
+        let dataToSend = JSON.stringify(elemento);
+
+        $.ajax({
+            url:"http://129.151.100.76:8080/api/Reservation/update",
+            type:"PUT",
+            data:dataToSend,
+            contentType:"application/JSON",
+            success:function(response){
+                console.log(Response);
+                $("#miListaReservacion").empty();
+                alert("se ha Actualizado correctamente el cliente")
+                $("#resultado5").empty();
+                $("#startDate").val("");
+                $("#devolutionDate").val("");
+                $("#status").val("");
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert("No se actualizo correctamente");
+        
+            }
+
+        });
+    }
+}
